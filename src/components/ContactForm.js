@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, selectContacts } from './contactsSlice';
 import { nanoid } from 'nanoid';
 
-const ContactForm = ({ onAddContact }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
   const [formData, setFormData] = useState({ name: '', number: '' });
 
   const handleInputChange = event => {
@@ -17,13 +21,25 @@ const ContactForm = ({ onAddContact }) => {
       return;
     }
 
+    // Перевірка наявності контакту із введеним ім'ям або номером
+    const contactExists = contacts.some(
+      contact =>
+        contact.name.toLowerCase() === name.toLowerCase() ||
+        contact.number === number
+    );
+
+    if (contactExists) {
+      alert("Контакт з таким ім'ям або номером вже існує.");
+      return;
+    }
+
     const newContact = {
       id: nanoid(),
       name,
       number,
     };
 
-    onAddContact(newContact);
+    dispatch(addContact(newContact));
     setFormData({ name: '', number: '' });
   };
 
