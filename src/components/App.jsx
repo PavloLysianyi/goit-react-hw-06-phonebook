@@ -1,37 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, deleteContact, updateFilter } from './contactsSlice';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
 import ContactList from './ContactList';
 
 const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const storedContacts = localStorage.getItem('contacts');
-    return storedContacts ? JSON.parse(storedContacts) : [];
-  });
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
+  const filter = useSelector(state => state.filter);
 
   const handleFilterChange = event => {
-    setFilter(event.target.value);
+    dispatch(updateFilter(event.target.value));
   };
 
   const handleAddContact = newContact => {
-    const { name } = newContact;
-    const isNameExists = contacts.some(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (isNameExists) {
-      alert(`Контакт з ім'ям ${name} вже існує у телефонній книзі.`);
-      return;
-    }
-
-    setContacts(prevContacts => [...prevContacts, newContact]);
+    dispatch(addContact(newContact));
   };
 
   const handleDeleteContact = id => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== id)
-    );
+    dispatch(deleteContact(id));
   };
 
   const filteredContacts = contacts.filter(contact =>
