@@ -11,7 +11,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, contactsReducer);
 
 const store = configureStore({
-  reducer: persistedReducer,
+  reducer: { contacts: persistedReducer },
   middleware: getDefaultMiddleware => {
     return getDefaultMiddleware({
       serializableCheck: {
